@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+option csharp_namespace = "gRPC.HunterService.Protos";
+
+package hunter;
+
+service HunterServiceProto {
+  rpc GetAllHunter (Empty) returns (HunterListResponse);
+  rpc GetHunterById (HunterIdRequest) returns (HunterResponse);
+  rpc CreateHunter (HunterRequest) returns (GenericResponse);
+  rpc UpdateHunter (HunterUpdateRequest) returns (GenericResponse);
+  rpc DeleteHunter (HunterIdRequest) returns (GenericResponse);
+}
+
+message Empty {}
+
+message HunterIdRequest {
+  int32 id = 1;
+}
+
+message HunterRequest {
+  string name = 1;
+  int32 age = 2;
+  string origin = 3;
+}
+
+message HunterUpdateRequest {
+  int32 id = 1;
+  string name = 2;
+  int32 age = 3;
+  string origin = 4;
+}
+
+message HunterResponse {
+  int32 id = 1;
+  string name = 2;
+  int32 age = 3;
+  string origin = 4;
+}
+
+message HunterListResponse {
+  repeated HunterResponse hunters = 1;
+}
+
+message GenericResponse {
+  bool success = 1;
+  string message = 2;
+}

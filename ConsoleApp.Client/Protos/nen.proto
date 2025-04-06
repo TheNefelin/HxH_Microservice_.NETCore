@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option csharp_namespace = "gRPC_NenService.Protos";
+
+package nen;
+
+service NenService {
+  rpc GetNenAbility (NenRequest) returns (NenResponse);
+}
+
+message NenRequest {
+  int32 hunterId = 1;
+}
+
+message NenResponse {
+  string ability = 1;
+  float percentage = 2;
+}
