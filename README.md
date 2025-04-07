@@ -3,22 +3,23 @@
 ### Clean Code Architecture
 ```
 graph TD;
-    Core --> Infrastructure;
-    Infrastructure --> Application;
-    Application --> WebAPI;
-    Application --> gRPC_HunterService;
-    Application --> gRPC_NenService;
-    gRPC_HunterService --> Infrastructure;
-    gRPC_NenService --> Infrastructure;
-    WebAPI --> Infrastructure;
-    WebAPI --> Application;
-    WebAPI --> gRPC_HunterService;
-    WebAPI --> gRPC_NenService;
-    Application --> UnitTests;
-    Infrastructure --> UnitTests;
-    WebAPI --> UnitTests;
-    gRPC_HunterService --> UnitTests;
-    gRPC_NenService --> UnitTests;
+    Core --> Infrastructure
+    Infrastructure --> Application
+    Application --> WebAPI
+    Application --> gRPC_HunterService
+    Application --> gRPC_NenService
+    gRPC_HunterService --> Infrastructure
+    gRPC_NenService --> Infrastructure
+    WebAPI --> Infrastructure
+    WebAPI --> Application
+    WebAPI --> gRPC_HunterService
+    WebAPI --> gRPC_NenService
+    Application --> UnitTests
+    Infrastructure --> UnitTests
+    WebAPI --> UnitTests
+    gRPC_HunterService --> UnitTests
+    gRPC_NenService --> UnitTests
+    ;
 ```
 
 ### Packages (Server)
@@ -91,9 +92,6 @@ graph TD;
 │   └── Program.cs
 │
 └── /HxH_Microservice.UnitTests         <-- Proyecto de pruebas unitarias
-    ├── /Core.Tests
-    │   ├── HunterTests.cs
-    │   └── NenTests.cs
     ├── /Application.Tests
     │   ├── HunterServiceTests.cs
     │   └── NenServiceTests.cs
