@@ -3,6 +3,7 @@ using ClassLibrary.Core.Interfaces;
 using ClassLibrary.Infrastructure.Data;
 using Microsoft.Extensions.Logging;
 using Oracle.ManagedDataAccess.Client;
+using Oracle.ManagedDataAccess.Types;
 using System.Data;
 
 namespace ClassLibrary.Infrastructure.Repositories;
@@ -18,24 +19,31 @@ public class HunterRepository : IHunterRepository
         _logger = logger;
     }
 
-    public async Task<bool> CreateAsync(HunterDTO hunterDTO)
+    public async Task<int> CreateAsync(HunterDTO hunterDTO)
     {
         _logger.LogInformation("[HunterRepository] Creating new hunter: {@Hunter}", hunterDTO);
         string query = @"
         INSERT INTO HUNTER (NAME, AGE, ORIGIN) 
-        VALUES (:name, :age, :origin)";
+        VALUES (:name, :age, :origin) 
+        RETURNING ID_HUNTER INTO :id";
+
+        var idParam = new OracleParameter("id", OracleDbType.Int32)
+        {
+            Direction = ParameterDirection.Output
+        };
 
         var parameters = new[]
         {
             new OracleParameter("name", hunterDTO.Name),
             new OracleParameter("age", hunterDTO.Age),
-            new OracleParameter("origin", hunterDTO.Origin)
+            new OracleParameter("origin", hunterDTO.Origin),
+            idParam
         };
 
         var affectedRows = await _dbContext.ExecuteNonQueryAsync(query, parameters);
         _logger.LogInformation("[HunterRepository] Rows affected: {Rows}", affectedRows);
 
-        return affectedRows > 0;
+        return affectedRows > 0 ? Convert.ToInt32(((OracleDecimal)idParam.Value).ToInt32()) : 0;
     }
 
     public async Task<bool> DeleteAsync(int id)

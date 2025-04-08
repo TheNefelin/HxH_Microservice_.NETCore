@@ -6,7 +6,7 @@ public interface IHunterRepository
 {
     Task<IEnumerable<HunterDTO>> GetAllAsync();
     Task<HunterDTO?> GetByIdAsync(int id);
-    Task<bool> CreateAsync(HunterDTO hunterDTO);
+    Task<int> CreateAsync(HunterDTO hunterDTO);
     Task<bool> UpdateAsync(HunterDTO hunterDTO);
     Task<bool> DeleteAsync(int id);
 }

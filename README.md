@@ -1,7 +1,7 @@
 ﻿# Hunter x Hunter Microservices .NET 9
 
 ### Clean Code Architecture
-```
+```mermaid
 graph TD;
     Core --> Infrastructure
     Infrastructure --> Application

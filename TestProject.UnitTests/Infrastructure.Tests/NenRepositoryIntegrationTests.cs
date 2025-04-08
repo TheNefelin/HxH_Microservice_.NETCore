@@ -1,5 +1,5 @@
 ﻿namespace TestProject.UnitTests.Infrastructure.Tests;
 
-public class NenRepositoryTests
+public class NenRepositoryIntegrationTests
 {
 }

@@ -15,12 +15,12 @@ public class HunterService : IHunterService
         _logger = logger;
     }
 
-    public async Task<bool> CreateAsync(HunterDTO hunterDTO)
+    public async Task<int> CreateAsync(HunterDTO hunterDTO)
     {
         _logger.LogInformation("[HunterService] Creating new hunter: {@Hunter}", hunterDTO);
         var result = await _hunterRepository.CreateAsync(hunterDTO);
 
-        if (!result)
+        if (result == 0)
             _logger.LogWarning("[HunterService] Failed to create hunter: {@Hunter}", hunterDTO);
 
         return result;

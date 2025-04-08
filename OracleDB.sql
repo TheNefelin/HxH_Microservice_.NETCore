@@ -34,8 +34,8 @@ INSERT INTO NEN_TYPE (NAME, DESCRIPTION) VALUES ('Emisión', 'Proyecta el aura l
 INSERT INTO NEN_TYPE (NAME, DESCRIPTION) VALUES ('Manipulación', 'Controla objetos o seres');
 
 INSERT INTO HUNTER (NAME, AGE, ORIGIN) VALUES ('Gon Freecss', 14, 'Isla Ballena');
-INSERT INTO HUNTER (NAME, AGE, ORIGIN) VALUES ('Killua Zoldyck', 14, 'Familia Zoldyck');
-INSERT INTO HUNTER (NAME, AGE, ORIGIN) VALUES ('Kurapika', 17, 'Kurta Clan');
+INSERT INTO HUNTER (NAME, AGE, ORIGIN) VALUES ('Killua Zoldyck', 14, 'Montaña Kukuru');
+INSERT INTO HUNTER (NAME, AGE, ORIGIN) VALUES ('Kurapika Kurta', 17, 'Aldea Kurta');
 INSERT INTO HUNTER (NAME, AGE, ORIGIN) VALUES ('Leorio Paradinight', 19, 'Ciudad desconocida');
 
 INSERT INTO HUNTER_NEN VALUES (1, 1, 90.0);

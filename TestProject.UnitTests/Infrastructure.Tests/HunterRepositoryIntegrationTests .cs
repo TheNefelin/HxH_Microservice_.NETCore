@@ -19,13 +19,13 @@ public class HunterRepositoryIntegrationTests
     public async Task CreateAsync_ShouldInsertHunter()
     {
         // Arrange
-        var hunter = new HunterDTO { Name = "Gon", Age = 12, Origin = "Whale Island" };
+        var hunter = new HunterDTO { Name = "Hisoka Morow", Age = 28, Origin = "Ciudad desconocida" };
 
         // Act
-        var result = await _hunterRepository.CreateAsync(hunter);
+        var idHunter = await _hunterRepository.CreateAsync(hunter);
 
         // Assert
-        Assert.True(result);
+        Assert.True(idHunter > 0);
     }
 
     [Fact]
@@ -43,17 +43,47 @@ public class HunterRepositoryIntegrationTests
     public async Task GetByIdAsync_ShouldReturnCorrectHunter()
     {
         // Arrange
-        var hunter = new HunterDTO { Name = "Killua", Age = 12, Origin = "Zoldyck" };
-        await _hunterRepository.CreateAsync(hunter);
-
-        var all = await _hunterRepository.GetAllAsync();
-        var lastHunter = all.Last();
+        var hunter = new HunterDTO { Name = "Isaac Netero", Age = 110, Origin = "Ciudad desconocida" };
+        var idHunter = await _hunterRepository.CreateAsync(hunter);
 
         // Act
-        var result = await _hunterRepository.GetByIdAsync(lastHunter.Id_Hunter);
+        var result = await _hunterRepository.GetByIdAsync(idHunter);
 
         // Assert
         Assert.NotNull(result);
         Assert.Equal(hunter.Name, result.Name);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_ShouldRemoveHunter()
+    {
+        // Arrange
+        var hunter = new HunterDTO { Name = "Biscuit Krueger", Age = 57, Origin = "Ciudad desconocida" };
+        await _hunterRepository.CreateAsync(hunter);
+        var all = await _hunterRepository.GetAllAsync();
+        var lastHunter = all.Last();
+
+        // Act
+        var result = await _hunterRepository.DeleteAsync(lastHunter.Id_Hunter);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldModifyHunter()
+    {
+        // Arrange
+        var hunter = new HunterDTO { Name = "Chrollo", Age = 26, Origin = "Ciudad Meteoro" };
+        await _hunterRepository.CreateAsync(hunter);
+        var all = await _hunterRepository.GetAllAsync();
+        var lastHunter = all.Last();
+
+        // Act
+        lastHunter.Name = "Chrollo Lucilfer";
+        var result = await _hunterRepository.UpdateAsync(lastHunter);
+        
+        // Assert
+        Assert.True(result);
     }
 }

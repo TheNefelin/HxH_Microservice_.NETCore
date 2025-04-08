@@ -69,17 +69,17 @@ public class HunterGrpcService : HunterServiceProto.HunterServiceProtoBase
             Origin = request.Origin
         };
 
-        var success = await _hunterService.CreateAsync(dto);
+        var idUHunter = await _hunterService.CreateAsync(dto);
 
-        if (success)
-            _logger.LogInformation("Hunter created successfully: {Name}", request.Name);
-        else
+        if (idUHunter == 0)
             _logger.LogWarning("Failed to create hunter: {Name}", request.Name);
+        else
+            _logger.LogInformation("Hunter created successfully: {Name}", request.Name);
 
         return new GenericResponse
         {
-            Success = success,
-            Message = success ? "Hunter created successfully" : "Failed to create hunter"
+            Success = idUHunter == 0 ? true : false,
+            Message = idUHunter == 0 ? "Failed to create hunter" : "Hunter created successfully",
         };
     }
 

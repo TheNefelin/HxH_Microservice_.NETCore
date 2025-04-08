@@ -24,13 +24,13 @@ public class HunterServiceTests
     {
         // Arrange
         var hunter = new HunterDTO { Id_Hunter = 1, Name = "Gon", Age = 12, Origin = "Whale Island" };
-        _mockRepo.Setup(r => r.CreateAsync(hunter)).ReturnsAsync(true);
+        _mockRepo.Setup(r => r.CreateAsync(hunter)).ReturnsAsync(hunter.Id_Hunter);
 
         // Act
-        var result = await _hunterService.CreateAsync(hunter);
+        var idHunter = await _hunterService.CreateAsync(hunter);
 
         // Assert
-        Assert.True(result);
+        Assert.Equal(idHunter, hunter.Id_Hunter);
         _mockRepo.Verify(r => r.CreateAsync(hunter), Times.Once);
     }
 
@@ -39,13 +39,13 @@ public class HunterServiceTests
     {
         // Arrange
         var hunter = new HunterDTO { Id_Hunter = 2, Name = "Killua", Age = 12, Origin = "Zoldyck" };
-        _mockRepo.Setup(r => r.CreateAsync(hunter)).ReturnsAsync(false);
+        _mockRepo.Setup(r => r.CreateAsync(hunter)).ReturnsAsync(hunter.Id_Hunter + 1);
 
         // Act
-        var result = await _hunterService.CreateAsync(hunter);
+        var idHunter = await _hunterService.CreateAsync(hunter);
 
         // Assert
-        Assert.False(result);
+        Assert.NotEqual(hunter.Id_Hunter, idHunter);
         _mockRepo.Verify(r => r.CreateAsync(hunter), Times.Once);
     }
 
