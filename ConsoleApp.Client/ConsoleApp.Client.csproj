@@ -21,7 +21,7 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<Protobuf Include="Protos\nen.proto" GrpcServices="Client" />
+		<Protobuf Include="Protos\nen.proto" GrpcServices="Server" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -8,14 +8,14 @@ namespace TestProject.UnitTests.Application.Tests;
 
 public class HunterServiceTests
 {
-    private readonly Mock<IHunterRepository> _mockRepo;
     private readonly Mock<ILogger<HunterService>> _mockLogger;
+    private readonly Mock<IHunterRepository> _mockRepo;
     private readonly HunterService _hunterService;
 
     public HunterServiceTests()
     {
-        _mockRepo = new Mock<IHunterRepository>();
         _mockLogger = new Mock<ILogger<HunterService>>();
+        _mockRepo = new Mock<IHunterRepository>();
         _hunterService = new HunterService(_mockRepo.Object, _mockLogger.Object);
     }
 

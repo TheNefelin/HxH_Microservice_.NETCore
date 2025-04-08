@@ -6,7 +6,7 @@ public interface INenRepository
 {
     Task<IEnumerable<NenTypeDTO>> GetAllAsync();
     Task<NenTypeDTO?> GetByIdAsync(int id);
-    Task<bool> CreateAsync(NenTypeDTO nenType);
+    Task<int> CreateAsync(NenTypeDTO nenType);
     Task<bool> UpdateAsync(NenTypeDTO nenType);
     Task<bool> DeleteAsync(int id);
 }

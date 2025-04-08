@@ -8,23 +8,32 @@ graph TD;
     Application --> WebAPI
     Application --> gRPC_HunterService
     Application --> gRPC_NenService
-    gRPC_HunterService --> Infrastructure
-    gRPC_NenService --> Infrastructure
-    WebAPI --> Infrastructure
-    WebAPI --> Application
-    WebAPI --> gRPC_HunterService
-    WebAPI --> gRPC_NenService
-    Application --> UnitTests
-    Infrastructure --> UnitTests
-    WebAPI --> UnitTests
     gRPC_HunterService --> UnitTests
     gRPC_NenService --> UnitTests
     ;
 ```
 
 ### Packages (Server)
+- Infrastructure
 ```
-- 
+Microsoft.Extensions.Logging
+Oracle.ManagedDataAccess.Core
+ClassLibrary.Core
+```
+- Application
+```
+ClassLibrary.Infrastructure
+```
+- gRPC_HunterService
+- gRPC_NenService
+```
+Grpc.AspNetCore
+ClassLibrary.Application
+```
+- TestProject.UnitTests
+```
+Moq
+ClassLibrary.Application
 ```
 
 ## gRPC: (google) Remote Procedure Call
@@ -59,14 +68,13 @@ graph TD;
 │   ├── /DTOs
 │   │   ├── HunterDTO.cs
 │   │   └── NenTypeDTO.cs
-│   ├── /Entities
-│   │   ├── Hunter.cs
-│   │   └── NenType.cs
 │   └── /Interfaces
+│       ├── IHunterRepository.cs
 │       ├── IHunterService.cs
+│       ├── INenRepository.cs
 │       └── INenService.cs
 │
-├── /HxH_Microservice.Infrastructure    <-- Librería de clases: Infraestructura
+├── /ClassLibrary.Infrastructure        <-- Librería de clases: Infraestructura
 │   ├── /Data
 │   │   └── OracleDbContext.cs
 │   └── /Repositories
@@ -87,22 +95,30 @@ graph TD;
 │   │   └── NenGrpcService.cs
 │   └── Program.cs
 │
-├── /HxH_Microservice.WebAPI            <-- Proyecto WebAPI (si decides exponer una API RESTful)
+├── /gRPC_Gateway                       <-- Proyecto WebAPI (si decides exponer una API RESTful)
 │   ├── /Controllers
 │   └── Program.cs
 │
-└── /HxH_Microservice.UnitTests         <-- Proyecto de pruebas unitarias
+└── /TestProject.UnitTests              <-- Proyecto de pruebas unitarias
     ├── /Application.Tests
     │   ├── HunterServiceTests.cs
     │   └── NenServiceTests.cs
     ├── /Infrastructure.Tests
-    │   ├── HunterRepositoryTests.cs
-    │   └── NenRepositoryTests.cs
+    │   ├── DatabaseCollection.cs
+    │   ├── DatabaseFixture.cs
+    │   ├── HunterRepositoryIntegrationTests.cs
+    │   └── NenRepositoryIntegrationTests.cs
     └── /WebAPI.Tests
         └── HunterControllerTests.cs
 ```
 
-### Steps for creation
+# Steps for creation Clean Architecture
+
+
+<hr>
+<hr>
+<hr>
+
 1. Create a .proto file in Proto folder
 2. New item -> search grpc or proto -> find Protocol Buffer File
 ```

@@ -49,7 +49,8 @@ public class HunterRepository : IHunterRepository
     public async Task<bool> DeleteAsync(int id)
     {
         _logger.LogInformation("[HunterRepository] Deleting hunter with ID: {Id}", id);
-        string query = @"DELETE FROM HUNTER WHERE ID_HUNTER = :id";
+        string query = @"
+        DELETE FROM HUNTER WHERE ID_HUNTER = :id";
 
         var parameter = new OracleParameter("id", id);
 
@@ -63,8 +64,7 @@ public class HunterRepository : IHunterRepository
     {
         _logger.LogInformation("[HunterRepository] Retrieving all hunters...");
         string query = @"
-        SELECT ID_HUNTER, NAME, AGE, ORIGIN 
-        FROM HUNTER";
+        SELECT ID_HUNTER, NAME, AGE, ORIGIN FROM HUNTER";
 
         var table = await _dbContext.ExecuteQueryAsync(query);
 

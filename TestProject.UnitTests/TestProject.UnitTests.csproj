@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ClassLibrary.Application\ClassLibrary.Application.csproj" />
-    <ProjectReference Include="..\ClassLibrary.Core\ClassLibrary.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
