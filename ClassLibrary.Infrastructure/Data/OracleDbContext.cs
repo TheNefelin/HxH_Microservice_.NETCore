@@ -60,4 +60,26 @@ public class OracleDbContext
             throw;
         }
     }
+
+    public async Task<T> ExecuteScalarAsync<T>(string query, params OracleParameter[] parameters)
+    {
+        try
+        {
+            using var connection = new OracleConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new OracleCommand(query, connection);
+            if (parameters.Length > 0)
+                command.Parameters.AddRange(parameters);
+
+            // Ejecuta la consulta y devuelve el resultado como tipo T
+            var result = await command.ExecuteScalarAsync();
+            return (T)Convert.ChangeType(result, typeof(T));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "[OracleDbContext] Error in ExecuteScalarAsync with query: {Query}", query);
+            throw;
+        }
+    }
 }

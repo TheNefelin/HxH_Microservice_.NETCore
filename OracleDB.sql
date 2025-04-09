@@ -17,7 +17,7 @@ CREATE TABLE HUNTER (
 CREATE TABLE HUNTER_NEN (
     ID_HUNTER NUMBER NOT NULL,
     ID_NEN_TYPE NUMBER NOT NULL,
-    PERCENTAGE FLOAT,
+    NEN_LEVEL FLOAT,
     PRIMARY KEY (ID_HUNTER, ID_NEN_TYPE),
     CONSTRAINT FK_HUNTER FOREIGN KEY (ID_HUNTER) REFERENCES HUNTER(ID_HUNTER),
     CONSTRAINT FK_NEN_TYPE FOREIGN KEY (ID_NEN_TYPE) REFERENCES NEN_TYPE(ID_NEN_TYPE)
@@ -26,12 +26,12 @@ CREATE TABLE HUNTER_NEN (
 -- Data ---------------------------------------------------------
 -- --------------------------------------------------------------
 
-INSERT INTO NEN_TYPE (NAME, DESCRIPTION) VALUES ('Intensificación', 'Mejora sus habilidades físicas');
-INSERT INTO NEN_TYPE (NAME, DESCRIPTION) VALUES ('Transformación', 'Cambia propiedades de su aura');
-INSERT INTO NEN_TYPE (NAME, DESCRIPTION) VALUES ('Materialización', 'Crea objetos físicos');
-INSERT INTO NEN_TYPE (NAME, DESCRIPTION) VALUES ('Especialización', 'Habilidades únicas fuera de las demás categorías');
-INSERT INTO NEN_TYPE (NAME, DESCRIPTION) VALUES ('Emisión', 'Proyecta el aura lejos del cuerpo');
-INSERT INTO NEN_TYPE (NAME, DESCRIPTION) VALUES ('Manipulación', 'Controla objetos o seres');
+INSERT INTO NEN_TYPE (NAME, NEN_LEVEL) VALUES ('Intensificación', 'Mejora sus habilidades físicas');
+INSERT INTO NEN_TYPE (NAME, NEN_LEVEL) VALUES ('Transformación', 'Cambia propiedades de su aura');
+INSERT INTO NEN_TYPE (NAME, NEN_LEVEL) VALUES ('Materialización', 'Crea objetos físicos');
+INSERT INTO NEN_TYPE (NAME, NEN_LEVEL) VALUES ('Especialización', 'Habilidades únicas fuera de las demás categorías');
+INSERT INTO NEN_TYPE (NAME, NEN_LEVEL) VALUES ('Emisión', 'Proyecta el aura lejos del cuerpo');
+INSERT INTO NEN_TYPE (NAME, NEN_LEVEL) VALUES ('Manipulación', 'Controla objetos o seres');
 
 INSERT INTO HUNTER (NAME, AGE, ORIGIN) VALUES ('Gon Freecss', 14, 'Isla Ballena');
 INSERT INTO HUNTER (NAME, AGE, ORIGIN) VALUES ('Killua Zoldyck', 14, 'Montaña Kukuru');

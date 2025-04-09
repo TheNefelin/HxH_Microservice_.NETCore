@@ -5,7 +5,6 @@
 graph TD;
     Core --> Infrastructure
     Infrastructure --> Application
-    Application --> WebAPI
     Application --> gRPC_HunterService
     Application --> gRPC_NenService
     gRPC_HunterService --> UnitTests
@@ -112,8 +111,107 @@ ClassLibrary.Application
         └── HunterControllerTests.cs
 ```
 
-# Steps for creation Clean Architecture
+# Steps for Creating Clean Architecture"
+## Core
+- Entities and DTOs
+```
+public class HunterNenDTO
+{
+    public int Id_Hunter { get; set; }
+    public int Id_NenType { get; set; }
+    public float NenLevel { get; set; }
+}
+```
+- Interfaces
+```
+public interface IHunterNenRepository
+{
+    Task<bool> AddHunterNenAsync(HunterNenDTO hunterNen);
+    Task<bool> UpdateHunterNenAsync(HunterNenDTO hunterNen);
+    Task<bool> DeleteHunterNenAsync(int idHunter, int idNenType);
+    Task<HunterNenDTO?> GetHunterNenByIdAsync(int idHunter, int idNenType);
+    Task<IEnumerable<HunterNenDTO>> GetAllHunterNensAsync();
+}
+```
+```
+public interface IHunterNenService
+{
+    Task<bool> AddHunterNenAsync(HunterNenDTO hunterNen);
+    Task<bool> UpdateHunterNenAsync(HunterNenDTO hunterNen);
+    Task<bool> DeleteHunterNenAsync(int idHunter, int idNenType);
+    Task<HunterNenDTO?> GetHunterNenByIdAsync(int idHunter, int idNenType);
+    Task<IEnumerable<HunterNenDTO>> GetAllHunterNensAsync();
+}
+```
+## Infrastructure
+- Data
+```
+public class OracleDbContext
+{
+    private readonly string _connectionString;
+    private readonly ILogger<OracleDbContext> _logger;
 
+    public OracleDbContext(string connectionString, ILogger<OracleDbContext> logger)
+    {
+        _connectionString = connectionString;
+        _logger = logger;
+    }
+
+    public async Task<DataTable> ExecuteQueryAsync(string query, params OracleParameter[] parameters)
+    {
+        try
+        {
+            using var connection = new OracleConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new OracleCommand(query, connection);
+            if (parameters.Length > 0)
+                command.Parameters.AddRange(parameters);
+
+            using var reader = await command.ExecuteReaderAsync();
+            var resultTable = new DataTable();
+            resultTable.Load(reader);
+
+            _logger.LogInformation("[OracleDbContext] Query executed: {Query} with Parameters: {@Parameters}", query, parameters);
+            return resultTable;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "[OracleDbContext] Error in ExecuteNonQueryAsync with query: {Query} and Parameters: {@Parameters}", query, parameters);
+            throw;
+        }        
+    }
+
+    public async Task<int> ExecuteNonQueryAsync(string query, params OracleParameter[] parameters)
+    {
+        try
+        {
+            using var connection = new OracleConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new OracleCommand(query, connection);
+            if (parameters.Length > 0)
+                command.Parameters.AddRange(parameters);
+
+            _logger.LogInformation("[OracleDbContext] Query execute correctly: {Query}", query);
+            return await command.ExecuteNonQueryAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "[OracleDbContext] Error in ExecuteNonQueryAsync with query: {Query}", query);
+            throw;
+        }
+    }
+}
+```
+- Repositories
+```
+```
+## Application
+
+## gRPC
+
+## Unit Tests
 
 <hr>
 <hr>
