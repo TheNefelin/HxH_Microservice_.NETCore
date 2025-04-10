@@ -43,11 +43,78 @@ INSERT INTO HUNTER_NEN VALUES (2, 2, 80.5);
 INSERT INTO HUNTER_NEN VALUES (3, 4, 95.0);
 INSERT INTO HUNTER_NEN VALUES (4, 5, 65.0);
 
+-- Types --------------------------------------------------------
+-- --------------------------------------------------------------
+
+CREATE OR REPLACE TYPE ResultObj AS OBJECT (
+    IsSuccess   NUMBER(1),
+    Message     VARCHAR2(255),
+    Data        VARCHAR2(255)
+);
+
 -- Stored Procedure ---------------------------------------------
 -- --------------------------------------------------------------
 
+CREATE OR REPLACE PROCEDURE InsertHunterNen(
+    p_Id_Hunter IN hunter.id_hunter%TYPE,
+    p_Id_NenType IN NUMBER,
+    p_NenLevel IN NUMBER,
+    p_Result OUT ResultObj
+) AS
+    v_count NUMBER;
+BEGIN
+    -- Validate if Hunter exists
+    SELECT COUNT(1) INTO v_count FROM Hunter WHERE Id_Hunter = p_Id_Hunter;
+    IF v_count = 0 THEN
+        p_Result := ResultObj(0, 'Hunter not found', NULL);
+        RETURN;
+    END IF;
+        
+    -- Validate if NenType exists
+    SELECT COUNT(1) INTO v_count FROM Nen_Type WHERE Id_Nen_Type = p_Id_NenType;
+    IF v_count = 0 THEN
+        p_Result := ResultObj(0, 'NenType not found', NULL);
+        RETURN;
+    END IF;
+
+    -- Check if HunterNen already exists
+    SELECT COUNT(1) INTO v_count FROM Hunter_Nen WHERE Id_Hunter = p_Id_Hunter AND Id_Nen_Type = p_Id_NenType;
+    IF v_count > 0 THEN
+        p_Result := ResultObj(0, 'HunterNen already exists', NULL);
+        RETURN;
+    END IF;    
+    
+    -- Insert into Hunter_Nen
+    INSERT INTO Hunter_Nen (Id_Hunter, Id_Nen_Type, Nen_Level)
+    VALUES (p_Id_Hunter, p_Id_NenType, p_NenLevel);
+    
+    -- If the insert was successful, assign a success message
+    p_Result := ResultObj(1, 'Inserted successfully', NULL);  -- ResultObj: 1 for success, message, and null data
+EXCEPTION
+    WHEN OTHERS THEN
+        p_Result := ResultObj(0, 'Failed to insert HunterNen', NULL);  -- Handle exception with failure message
+        -- Optionally, you can log the error using DBMS_OUTPUT or other logging mechanisms
+        ROLLBACK;
+END InsertHunterNen;
+
 -- Query --------------------------------------------------------
 -- --------------------------------------------------------------
+
+DECLARE
+    v_result ResultObj;  -- Declare the ResultObj variable to hold the result
+BEGIN
+    -- Call the InsertHunterNen procedure
+    InsertHunterNen(
+        p_Id_Hunter => 1,
+        p_Id_NenType => 1,
+        p_NenLevel => 50,
+        p_Result => v_result
+    );
+
+    -- Output the result
+    DBMS_OUTPUT.PUT_LINE('Success: ' || v_result.IsSuccess);
+    DBMS_OUTPUT.PUT_LINE('Message: ' || v_result.Message);
+END;
 
 SELECT
     a.id_hunter,

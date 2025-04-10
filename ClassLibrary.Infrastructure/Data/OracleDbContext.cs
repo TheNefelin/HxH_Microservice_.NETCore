@@ -33,6 +33,11 @@ public class OracleDbContext
             _logger.LogInformation("[OracleDbContext] Query executed: {Query} with Parameters: {@Parameters}", query, parameters);
             return resultTable;
         }
+        catch (OracleException ex)
+        {
+            _logger.LogError(ex, "[OracleDbContext] Oracle error in ExecuteNonQueryAsync with query: {Query}", query);
+            throw;
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "[OracleDbContext] Error in ExecuteNonQueryAsync with query: {Query} and Parameters: {@Parameters}", query, parameters);
@@ -53,6 +58,11 @@ public class OracleDbContext
 
             _logger.LogInformation("[OracleDbContext] Query execute correctly: {Query}", query);
             return await command.ExecuteNonQueryAsync();
+        }
+        catch (OracleException ex)
+        {
+            _logger.LogError(ex, "[OracleDbContext] Oracle error in ExecuteNonQueryAsync with query: {Query}", query);
+            throw;
         }
         catch (Exception ex)
         {
@@ -75,6 +85,11 @@ public class OracleDbContext
             // Ejecuta la consulta y devuelve el resultado como tipo T
             var result = await command.ExecuteScalarAsync();
             return (T)Convert.ChangeType(result, typeof(T));
+        }
+        catch (OracleException ex)
+        {
+            _logger.LogError(ex, "[OracleDbContext] Oracle error in ExecuteNonQueryAsync with query: {Query}", query);
+            throw;
         }
         catch (Exception ex)
         {
