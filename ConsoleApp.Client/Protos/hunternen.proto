@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+option csharp_namespace = "gRPC.HunterNenService";
+
+package hunternen;
+
+service HunterNenProto {
+	rpc HunterNenGetAll (Empty) returns (HunterNenListResponse);
+	rpc HunterNenGetById (HunterNenRequest) returns (HunterNenResponse);
+	rpc HunterNenInsert (HunterNenRequest) returns (GenericResponse);
+	rpc HunterNenUpdate (HunterNenRequest) returns (GenericResponse);
+	rpc HunterNenDelete (HunterNenRequest) returns (GenericResponse);
+}
+
+message Empty {}
+
+message HunterNenRequest {
+	int32 idHunter = 1;
+	int32 idNen = 2;
+	float nenLevel = 3;
+}
+
+message HunterNenResponse {
+	int32 idHunter = 1;
+	int32 idNen = 2;
+	float nenLevel = 3;
+}
+
+message HunterNenListResponse {
+	repeated HunterNenResponse hunterNens = 1;
+}
+
+message GenericResponse {
+	bool success = 1;
+	string message = 2;
+}

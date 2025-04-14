@@ -1,12 +1,13 @@
-﻿using ClassLibrary.Core.DTOs;
+﻿using ClassLibrary.Core.Common;
+using ClassLibrary.Core.DTOs;
 
 namespace ClassLibrary.Core.Interfaces;
 
 public interface IHunterNenService
 {
-    Task<bool> AddHunterNenAsync(HunterNenDTO hunterNen);
-    Task<bool> UpdateHunterNenAsync(HunterNenDTO hunterNen);
-    Task<bool> DeleteHunterNenAsync(int idHunter, int idNenType);
-    Task<HunterNenDTO?> GetHunterNenByIdAsync(int idHunter, int idNenType);
     Task<IEnumerable<HunterNenDTO>> GetAllHunterNensAsync();
+    Task<HunterNenDTO?> GetHunterNenByIdAsync(HunterNenDTO hunterNen);
+    Task<Result<bool>> InsertHunterNenAsync(HunterNenDTO hunterNen);
+    Task<Result<bool>> UpdateHunterNenAsync(HunterNenDTO hunterNen);
+    Task<Result<bool>> DeleteHunterNenAsync(HunterNenDTO hunterNen);
 }
