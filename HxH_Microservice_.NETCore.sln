@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gRPC.HunterService", "gRPC.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gRPC.HunterNenService", "gRPC.HunterNenService\gRPC.HunterNenService.csproj", "{D3575689-0D40-4AE7-94C3-329FF3E9DFD0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gRPC.Gateway", "gRPC.Gateway\gRPC.Gateway.csproj", "{7B37F0B0-E948-403A-A972-53B213B7C008}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{D3575689-0D40-4AE7-94C3-329FF3E9DFD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D3575689-0D40-4AE7-94C3-329FF3E9DFD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3575689-0D40-4AE7-94C3-329FF3E9DFD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B37F0B0-E948-403A-A972-53B213B7C008}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B37F0B0-E948-403A-A972-53B213B7C008}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B37F0B0-E948-403A-A972-53B213B7C008}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B37F0B0-E948-403A-A972-53B213B7C008}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

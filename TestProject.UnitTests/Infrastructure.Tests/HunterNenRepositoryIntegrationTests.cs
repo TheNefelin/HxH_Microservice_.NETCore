@@ -74,5 +74,4 @@ public class HunterNenRepositoryIntegrationTests
         Assert.False(result.IsSuccess);
         //Assert.Equal("NenType not found.", result.Message);
     }
-
 }

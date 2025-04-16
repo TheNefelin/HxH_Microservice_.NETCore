@@ -23,6 +23,7 @@ ClassLibrary.Core
 ```
 ClassLibrary.Infrastructure
 ```
+- gRPC.HunterNenService
 - gRPC_HunterService
 - gRPC_NenService
 ```
@@ -31,8 +32,10 @@ ClassLibrary.Application
 ```
 - TestProject.UnitTests
 ```
+Grpc.Core
 Moq
 ClassLibrary.Application
+gRPC.HunterNenService
 ```
 
 ## gRPC: (google) Remote Procedure Call
@@ -94,6 +97,7 @@ ClassLibrary.Application
 │   │   └── hunter.proto
 │   ├── /Services
 │   │   └── HunterGrpcService.cs
+│   ├── appsettings.json
 │   └── Program.cs
 │
 ├── /gRPC_HunterService                 <-- Microservicio de Hunter (gRPC)
@@ -101,6 +105,7 @@ ClassLibrary.Application
 │   │   └── hunternen.proto
 │   ├── /Services
 │   │   └── GrpcHunterNenService.cs
+│   ├── appsettings.json
 │   └── Program.cs
 │
 ├── /gRPC_NenService                    <-- Microservicio de Nen (gRPC)
@@ -108,10 +113,14 @@ ClassLibrary.Application
 │   │   └── nen.proto
 │   ├── /Services
 │   │   └── NenGrpcService.cs
+│   ├── appsettings.json
 │   └── Program.cs
 │
 ├── /gRPC_Gateway                       <-- Proyecto WebAPI (si decides exponer una API RESTful)
 │   ├── /Controllers
+│   ├── /Protos
+│   │   └── hunter_nen.proto
+│   ├── appsettings.json
 │   └── Program.cs
 │
 └── /TestProject.UnitTests              <-- Proyecto de pruebas unitarias
@@ -125,6 +134,9 @@ ClassLibrary.Application
     │   ├── HunterNenRepositoryIntegrationTests.cs
     │   ├── HunterRepositoryIntegrationTests.cs
     │   └── NenRepositoryIntegrationTests.cs
+    ├── /gRPC.Tests
+    │   ├── GrpcHunterNenServiceTests.cs
+    │   └── TestServerCallContext.cs  
     └── /WebAPI.Tests
         └── HunterControllerTests.cs
 ```
@@ -750,133 +762,387 @@ public class GrpcHunterNenService : HunterNenProto.HunterNenProtoBase
 ```
 
 ## Unit Tests
-
-
-<hr>
-<hr>
-<hr>
-
-1. Create a .proto file in Proto folder
-2. New item -> search grpc or proto -> find Protocol Buffer File
+- Application.Tests
 ```
-syntax = "proto3";
-
-option csharp_namespace = "gRPC_Service.Protos";
-
-package my;
-
-service MyService {
-  rpc GetMy (MyRequest) returns (MyResponse);
-}
-
-message MyRequest {
-  int32 id = 1;
-}
-
-message MyResponse {
-  string name = 1;
-  float isNice = 2;
-}
-```
-3. Add the proto file to the project .csproj
-```
-<ItemGroup>
-	<Protobuf Include="Protos\my.proto" GrpcServices="Server" />
-</ItemGroup>
-```
-4. Create gRPC Service in Services folder
-```
-using Grpc.Core;
-using gRPC_Service.Protos;
-
-namespace gRPC_Service.Services;
-
-public class MyGrpcService : MyService.MyServiceBase
+public class HunterNenServiceTests
 {
-    public override Task<NenResponse> GetMyData(MyRequest request, ServerCallContext context)
+    private readonly Mock<ILogger<HunterService>> _mockLogger;
+    private readonly Mock<IHunterNenRepository> _mockRepo;
+    private readonly HunterNenService _hunterNenService;
+
+    public HunterNenServiceTests()
     {
-        return Task.FromResult(new MyResponse
-        { 
-            Id = 1, 
-            IsNice = true 
-        });
+        _mockLogger = new Mock<ILogger<HunterService>>();
+        _mockRepo = new Mock<IHunterNenRepository>();
+        _hunterNenService = new HunterNenService(_mockLogger.Object, _mockRepo.Object);
+    }
+
+    [Fact]
+    public async Task GetAllHunterNensAsync_ShouldReturnListOfHunterNens()
+    {
+        // Arrange
+        var hunterNens = new List<HunterNenDTO>
+        {
+            new HunterNenDTO { Id_Hunter = 1, Id_NenType = 1, NenLevel = 50 },
+            new HunterNenDTO { Id_Hunter  = 2, Id_NenType = 2, NenLevel = 80 }
+        };
+        _mockRepo.Setup(r => r.GetAllHunterNensAsync()).ReturnsAsync(hunterNens);
+       
+        // Act
+        var result = await _hunterNenService.GetAllHunterNensAsync();
+        
+        // Assert
+        Assert.Equal(hunterNens.Count, result.Count());
+        _mockRepo.Verify(r => r.GetAllHunterNensAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetHunterNenByIdAsync_ShouldReturnHunterNen_WhenExists()
+    {
+        // Arrange
+        var hunterNen = new HunterNenDTO { Id_Hunter = 1, Id_NenType = 1, NenLevel = 50 };
+        _mockRepo.Setup(r => r.GetHunterNenByIdAsync(hunterNen)).ReturnsAsync(hunterNen);
+
+        // Act
+        var result = await _hunterNenService.GetHunterNenByIdAsync(hunterNen);
+
+        // Assert
+        Assert.Equal(hunterNen, result);
+        _mockRepo.Verify(r => r.GetHunterNenByIdAsync(hunterNen), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetHunterNenByIdAsync_ShouldReturnNull_WhenNotExists()
+    {
+        // Arrange
+        var hunterNen = new HunterNenDTO { Id_Hunter = 1, Id_NenType = 1, NenLevel = 50 };
+        _mockRepo.Setup(r => r.GetHunterNenByIdAsync(hunterNen)).ReturnsAsync((HunterNenDTO?)null);
+
+        // Act
+        var result = await _hunterNenService.GetHunterNenByIdAsync(hunterNen);
+        
+        // Assert
+        Assert.Null(result);
+        _mockRepo.Verify(r => r.GetHunterNenByIdAsync(hunterNen), Times.Once);
+    }
+
+    [Fact]
+    public async Task InsertHunterNenAsync_ShouldReturnTrue_WhenInsertionSucceeds()
+    {
+        // Arrange
+        var hunterNen = new HunterNenDTO { Id_Hunter = 1, Id_NenType = 1, NenLevel = 50 };
+        _mockRepo.Setup(r => r.InsertHunterNenAsync(hunterNen)).ReturnsAsync(Result<bool>.Success(true));
+
+        // Act
+        var result = await _hunterNenService.InsertHunterNenAsync(hunterNen);
+        
+        // Assert
+        Assert.True(result.IsSuccess);
+        _mockRepo.Verify(r => r.InsertHunterNenAsync(hunterNen), Times.Once);
+    }
+
+    [Fact]
+    public async Task InsertHunterNenAsync_ShouldReturnFalse_WhenInsertionFails()
+    {
+        // Arrange
+        var hunterNen = new HunterNenDTO { Id_Hunter = 1, Id_NenType = 1, NenLevel = 50 };
+        _mockRepo.Setup(r => r.InsertHunterNenAsync(hunterNen)).ReturnsAsync(Result<bool>.Failure("Insertion failed"));
+    
+        // Act
+        var result = await _hunterNenService.InsertHunterNenAsync(hunterNen);
+        
+        // Assert
+        Assert.False(result.IsSuccess);
+        _mockRepo.Verify(r => r.InsertHunterNenAsync(hunterNen), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpdateHunterNenAsync_ShouldReturnTrue_WhenUpdateSucceeds()
+    {
+        // Arrange
+        var hunterNen = new HunterNenDTO { Id_Hunter = 1, Id_NenType = 1, NenLevel = 50 };
+        _mockRepo.Setup(r => r.UpdateHunterNenAsync(hunterNen)).ReturnsAsync(Result<bool>.Success(true));
+
+        // Act
+        var result = await _hunterNenService.UpdateHunterNenAsync(hunterNen);
+
+        // Assert
+        Assert.True(result.IsSuccess);
+        _mockRepo.Verify(r => r.UpdateHunterNenAsync(hunterNen), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpdateHunterNenAsync_ShouldReturnFalse_WhenUpdateFails()
+    {
+        // Arrange
+        var hunterNen = new HunterNenDTO { Id_Hunter = 1, Id_NenType = 1, NenLevel = 50 };
+        _mockRepo.Setup(r => r.UpdateHunterNenAsync(hunterNen)).ReturnsAsync(Result<bool>.Failure("Update failed"));
+
+        // Act
+        var result = await _hunterNenService.UpdateHunterNenAsync(hunterNen);
+
+        // Assert
+        Assert.False(result.IsSuccess);
+        _mockRepo.Verify(r => r.UpdateHunterNenAsync(hunterNen), Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteHunterNenAsync_ShouldReturnTrue_WhenDeletionSucceeds()
+    {
+        // Arrange
+        var hunterNen = new HunterNenDTO { Id_Hunter = 1, Id_NenType = 1, NenLevel = 50 };
+        _mockRepo.Setup(r => r.DeleteHunterNenAsync(hunterNen)).ReturnsAsync(Result<bool>.Success(true));
+
+        // Act
+        var result = await _hunterNenService.DeleteHunterNenAsync(hunterNen);
+        
+        // Assert
+        Assert.True(result.IsSuccess);
+        _mockRepo.Verify(r => r.DeleteHunterNenAsync(hunterNen), Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteHunterNenAsync_ShouldReturnFalse_WhenDeletionFails()
+    {
+        // Arrange
+        var hunterNen = new HunterNenDTO { Id_Hunter = 1, Id_NenType = 1, NenLevel = 50 };
+        _mockRepo.Setup(r => r.DeleteHunterNenAsync(hunterNen)).ReturnsAsync(Result<bool>.Failure("Deletion failed"));
+       
+        // Act
+        var result = await _hunterNenService.DeleteHunterNenAsync(hunterNen);
+
+        // Assert
+        Assert.False(result.IsSuccess);
+        _mockRepo.Verify(r => r.DeleteHunterNenAsync(hunterNen), Times.Once);
     }
 }
 ```
-5. Add the service to the Program.cs
+- Infrastructure.Tests
 ```
-app.MapGrpcService<MyGrpcService>();
-```
-
-# Oracle DB Connection and OracleDbContext.cs
-1. Add the Oracle.ManagedDataAccess package to the project
-2. Configure appsettings.json
-```
-"ConnectionStrings": {
-    "OracleDb": "User Id=testing;Password=testing;Data Source=localhost:1521/xe"
-}
-```
-3. Create a new class for the database connection OracleDbContext.cs
-- Use OracleDataAdapter to execute SELECT queries
-- Use OracleCommand to execute INSERT, UPDATE, DELETE queries
-- Use OracleParameter to pass parameters to the queries
-- Use DataTable to store the results of the queries
-```
-public class OracleDbContext
+[Collection("Database collection")]
+public class HunterNenRepositoryIntegrationTests
 {
-    private readonly string _connectionString;
-    private readonly ILogger<OracleDbContext> _logger;
+    private readonly HunterNenRepository _hunterNenRepository;
 
-    public OracleDbContext(string connectionString, ILogger<OracleDbContext> logger)
+    public HunterNenRepositoryIntegrationTests(DatabaseFixture fixture)
     {
-        _connectionString = connectionString;
-        _logger = logger;
+        var logger = NullLogger<HunterNenRepository>.Instance;
+        _hunterNenRepository = new HunterNenRepository(logger, fixture.DbContext);
     }
 
-    public async Task<DataTable> ExecuteQueryAsync(string query, params OracleParameter[] parameters)
+    [Fact]
+    public async Task InsertHunterNenAsync_AlreadyExists_ReturnsFailure()
     {
-        try
-        {
-            using var connection = new OracleConnection(_connectionString);
-            await connection.OpenAsync();
+        // Arrange
+        var existingDto = new HunterNenDTO { Id_Hunter = 1, Id_NenType = 1, NenLevel = 50 };
 
-            using var command = new OracleCommand(query, connection);
-            if (parameters.Length > 0)
-                command.Parameters.AddRange(parameters);
+        // Act
+        var result = await _hunterNenRepository.InsertHunterNenAsync(existingDto);
 
-            using var reader = await command.ExecuteReaderAsync();
-            var resultTable = new DataTable();
-            resultTable.Load(reader);
-
-            _logger.LogInformation("[OracleDbContext] Query executed: {Query} with Parameters: {@Parameters}", query, parameters);
-            return resultTable;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "[OracleDbContext] Error in ExecuteNonQueryAsync with query: {Query} and Parameters: {@Parameters}", query, parameters);
-            throw;
-        }        
+        // Assert
+        Assert.False(result.IsSuccess);
+        Assert.Equal("HunterNen already exists.", result.Message);
     }
 
-    public async Task<int> ExecuteNonQueryAsync(string query, params OracleParameter[] parameters)
+    [Fact]
+    public async Task InsertHunterNenAsync_ValidDto_InsertsSuccessfullyAndCleansUp()
     {
-        try
-        {
-            using var connection = new OracleConnection(_connectionString);
-            await connection.OpenAsync();
+        // Arrange
+        var dto = new HunterNenDTO { Id_Hunter = 4, Id_NenType = 4, NenLevel = 50 };
 
-            using var command = new OracleCommand(query, connection);
-            if (parameters.Length > 0)
-                command.Parameters.AddRange(parameters);
+        // Act
+        var result = await _hunterNenRepository.InsertHunterNenAsync(dto);
 
-            _logger.LogInformation("[OracleDbContext] Query execute correctly: {Query}", query);
-            return await command.ExecuteNonQueryAsync();
-        }
-        catch (Exception ex)
+        // Assert
+        Assert.True(result.IsSuccess);
+        Assert.True(result.Data);
+        Assert.Equal("Inserted successfully.", result.Message);
+
+        // Clean up: borrar el registro insertado
+        await _hunterNenRepository.DeleteHunterNenAsync(dto);
+    }
+
+    [Fact]
+    public async Task InsertHunterNenAsync_HunterNotFound_ReturnsFailure()
+    {
+        // Arrange
+        var dto = new HunterNenDTO { Id_Hunter = 9999, Id_NenType = 1, NenLevel = 50 };
+
+        // Act
+        var result = await _hunterNenRepository.InsertHunterNenAsync(dto);
+
+        // Assert
+        Assert.False(result.IsSuccess);
+        //Assert.Equal("Hunter not found.", result.Message);
+    }
+
+    [Fact]
+    public async Task InsertHunterNenAsync_NenTypeNotFound_ReturnsFailure()
+    {
+        // Arrange
+        var dto = new HunterNenDTO { Id_Hunter = 1, Id_NenType = 9999, NenLevel = 50 };
+
+        // Act
+        var result = await _hunterNenRepository.InsertHunterNenAsync(dto);
+
+        // Assert
+        Assert.False(result.IsSuccess);
+        //Assert.Equal("NenType not found.", result.Message);
+    }
+}
+```
+- gRPC Tests
+```
+public class HunterNenServiceTests
+{
+    private readonly Mock<ILogger<HunterService>> _mockLogger;
+    private readonly Mock<IHunterNenRepository> _mockRepo;
+    private readonly HunterNenService _hunterNenService;
+
+    public HunterNenServiceTests()
+    {
+        _mockLogger = new Mock<ILogger<HunterService>>();
+        _mockRepo = new Mock<IHunterNenRepository>();
+        _hunterNenService = new HunterNenService(_mockLogger.Object, _mockRepo.Object);
+    }
+
+    [Fact]
+    public async Task GetAllHunterNensAsync_ShouldReturnListOfHunterNens()
+    {
+        // Arrange
+        var hunterNens = new List<HunterNenDTO>
         {
-            _logger.LogError(ex, "[OracleDbContext] Error in ExecuteNonQueryAsync with query: {Query}", query);
-            throw;
-        }
+            new HunterNenDTO { Id_Hunter = 1, Id_NenType = 1, NenLevel = 50 },
+            new HunterNenDTO { Id_Hunter  = 2, Id_NenType = 2, NenLevel = 80 }
+        };
+        _mockRepo.Setup(r => r.GetAllHunterNensAsync()).ReturnsAsync(hunterNens);
+       
+        // Act
+        var result = await _hunterNenService.GetAllHunterNensAsync();
+        
+        // Assert
+        Assert.Equal(hunterNens.Count, result.Count());
+        _mockRepo.Verify(r => r.GetAllHunterNensAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetHunterNenByIdAsync_ShouldReturnHunterNen_WhenExists()
+    {
+        // Arrange
+        var hunterNen = new HunterNenDTO { Id_Hunter = 1, Id_NenType = 1, NenLevel = 50 };
+        _mockRepo.Setup(r => r.GetHunterNenByIdAsync(hunterNen)).ReturnsAsync(hunterNen);
+
+        // Act
+        var result = await _hunterNenService.GetHunterNenByIdAsync(hunterNen);
+
+        // Assert
+        Assert.Equal(hunterNen, result);
+        _mockRepo.Verify(r => r.GetHunterNenByIdAsync(hunterNen), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetHunterNenByIdAsync_ShouldReturnNull_WhenNotExists()
+    {
+        // Arrange
+        var hunterNen = new HunterNenDTO { Id_Hunter = 1, Id_NenType = 1, NenLevel = 50 };
+        _mockRepo.Setup(r => r.GetHunterNenByIdAsync(hunterNen)).ReturnsAsync((HunterNenDTO?)null);
+
+        // Act
+        var result = await _hunterNenService.GetHunterNenByIdAsync(hunterNen);
+        
+        // Assert
+        Assert.Null(result);
+        _mockRepo.Verify(r => r.GetHunterNenByIdAsync(hunterNen), Times.Once);
+    }
+
+    [Fact]
+    public async Task InsertHunterNenAsync_ShouldReturnTrue_WhenInsertionSucceeds()
+    {
+        // Arrange
+        var hunterNen = new HunterNenDTO { Id_Hunter = 1, Id_NenType = 1, NenLevel = 50 };
+        _mockRepo.Setup(r => r.InsertHunterNenAsync(hunterNen)).ReturnsAsync(Result<bool>.Success(true));
+
+        // Act
+        var result = await _hunterNenService.InsertHunterNenAsync(hunterNen);
+        
+        // Assert
+        Assert.True(result.IsSuccess);
+        _mockRepo.Verify(r => r.InsertHunterNenAsync(hunterNen), Times.Once);
+    }
+
+    [Fact]
+    public async Task InsertHunterNenAsync_ShouldReturnFalse_WhenInsertionFails()
+    {
+        // Arrange
+        var hunterNen = new HunterNenDTO { Id_Hunter = 1, Id_NenType = 1, NenLevel = 50 };
+        _mockRepo.Setup(r => r.InsertHunterNenAsync(hunterNen)).ReturnsAsync(Result<bool>.Failure("Insertion failed"));
+    
+        // Act
+        var result = await _hunterNenService.InsertHunterNenAsync(hunterNen);
+        
+        // Assert
+        Assert.False(result.IsSuccess);
+        _mockRepo.Verify(r => r.InsertHunterNenAsync(hunterNen), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpdateHunterNenAsync_ShouldReturnTrue_WhenUpdateSucceeds()
+    {
+        // Arrange
+        var hunterNen = new HunterNenDTO { Id_Hunter = 1, Id_NenType = 1, NenLevel = 50 };
+        _mockRepo.Setup(r => r.UpdateHunterNenAsync(hunterNen)).ReturnsAsync(Result<bool>.Success(true));
+
+        // Act
+        var result = await _hunterNenService.UpdateHunterNenAsync(hunterNen);
+
+        // Assert
+        Assert.True(result.IsSuccess);
+        _mockRepo.Verify(r => r.UpdateHunterNenAsync(hunterNen), Times.Once);
+    }
+
+    [Fact]
+    public async Task UpdateHunterNenAsync_ShouldReturnFalse_WhenUpdateFails()
+    {
+        // Arrange
+        var hunterNen = new HunterNenDTO { Id_Hunter = 1, Id_NenType = 1, NenLevel = 50 };
+        _mockRepo.Setup(r => r.UpdateHunterNenAsync(hunterNen)).ReturnsAsync(Result<bool>.Failure("Update failed"));
+
+        // Act
+        var result = await _hunterNenService.UpdateHunterNenAsync(hunterNen);
+
+        // Assert
+        Assert.False(result.IsSuccess);
+        _mockRepo.Verify(r => r.UpdateHunterNenAsync(hunterNen), Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteHunterNenAsync_ShouldReturnTrue_WhenDeletionSucceeds()
+    {
+        // Arrange
+        var hunterNen = new HunterNenDTO { Id_Hunter = 1, Id_NenType = 1, NenLevel = 50 };
+        _mockRepo.Setup(r => r.DeleteHunterNenAsync(hunterNen)).ReturnsAsync(Result<bool>.Success(true));
+
+        // Act
+        var result = await _hunterNenService.DeleteHunterNenAsync(hunterNen);
+        
+        // Assert
+        Assert.True(result.IsSuccess);
+        _mockRepo.Verify(r => r.DeleteHunterNenAsync(hunterNen), Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteHunterNenAsync_ShouldReturnFalse_WhenDeletionFails()
+    {
+        // Arrange
+        var hunterNen = new HunterNenDTO { Id_Hunter = 1, Id_NenType = 1, NenLevel = 50 };
+        _mockRepo.Setup(r => r.DeleteHunterNenAsync(hunterNen)).ReturnsAsync(Result<bool>.Failure("Deletion failed"));
+       
+        // Act
+        var result = await _hunterNenService.DeleteHunterNenAsync(hunterNen);
+
+        // Assert
+        Assert.False(result.IsSuccess);
+        _mockRepo.Verify(r => r.DeleteHunterNenAsync(hunterNen), Times.Once);
     }
 }
 ```
