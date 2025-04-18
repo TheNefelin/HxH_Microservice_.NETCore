@@ -1,7 +1,9 @@
-﻿using gRPC.HunterNenService;
+using gRPC.HunterNenService;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddServiceDefaults();
 
 // gRPC + Transcoding
 builder.Services.AddGrpc().AddJsonTranscoding();
@@ -33,6 +35,8 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 // ✅ Use Swagger
 app.UseSwagger();

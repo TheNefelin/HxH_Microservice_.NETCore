@@ -27,6 +27,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gRPC.HunterNenService", "gR
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gRPC.Gateway", "gRPC.Gateway\gRPC.Gateway.csproj", "{7B37F0B0-E948-403A-A972-53B213B7C008}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireAppManager.AppHost", "AspireAppManager\AspireAppManager.AppHost\AspireAppManager.AppHost.csproj", "{C8232E52-3548-4E33-9D54-D80C66FEA071}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireAppManager.ServiceDefaults", "AspireAppManager\AspireAppManager.ServiceDefaults\AspireAppManager.ServiceDefaults.csproj", "{ACDA205B-4456-0356-3D2D-748F9A046D13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +73,14 @@ Global
 		{7B37F0B0-E948-403A-A972-53B213B7C008}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B37F0B0-E948-403A-A972-53B213B7C008}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B37F0B0-E948-403A-A972-53B213B7C008}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8232E52-3548-4E33-9D54-D80C66FEA071}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8232E52-3548-4E33-9D54-D80C66FEA071}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8232E52-3548-4E33-9D54-D80C66FEA071}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8232E52-3548-4E33-9D54-D80C66FEA071}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACDA205B-4456-0356-3D2D-748F9A046D13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACDA205B-4456-0356-3D2D-748F9A046D13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACDA205B-4456-0356-3D2D-748F9A046D13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACDA205B-4456-0356-3D2D-748F9A046D13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

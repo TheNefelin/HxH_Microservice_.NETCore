@@ -10,6 +10,10 @@
     <PackageReference Include="Grpc.AspNetCore" Version="2.64.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AspireAppManager\AspireAppManager.ServiceDefaults\AspireAppManager.ServiceDefaults.csproj" />
+  </ItemGroup>
+
 	<ItemGroup>
 		<Protobuf Include="Protos\nen.proto" GrpcServices="Server" />
 	</ItemGroup>

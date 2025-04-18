@@ -17,6 +17,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AspireAppManager\AspireAppManager.ServiceDefaults\AspireAppManager.ServiceDefaults.csproj" />
+  </ItemGroup>
+
     <ItemGroup>
 		<Protobuf Include="Protos\hunternen.proto" GrpcServices="Client" />
     </ItemGroup>
