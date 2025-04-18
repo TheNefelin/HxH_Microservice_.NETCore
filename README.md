@@ -118,6 +118,7 @@ gRPC.HunterNenService
 │
 ├── /gRPC_Gateway                       <-- Proyecto WebAPI (si decides exponer una API RESTful)
 │   ├── /Controllers
+│   │   └── HunterNenController.cs
 │   ├── /Protos
 │   │   └── hunter_nen.proto
 │   ├── appsettings.json

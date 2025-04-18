@@ -17,12 +17,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\gRPC.HunterService\gRPC.HunterService.csproj" />
-  </ItemGroup>
-
-	<ItemGroup>
-		<Protobuf Include="Protos\hunter_nen.proto" GrpcServices="Server" AdditionalImportDirs="&#xD;&#xA;                    $(UserProfile)\.nuget\packages\google.api.commonprotos\2.16.0\content\protos;&#xD;&#xA;                    $(PkgGrpc_Tools)&#xD;&#xA;                  " />
-	</ItemGroup>
+    <ItemGroup>
+		<Protobuf Include="Protos\hunternen.proto" GrpcServices="Client" />
+    </ItemGroup>
 	
 </Project>
