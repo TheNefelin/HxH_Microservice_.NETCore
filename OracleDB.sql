@@ -26,22 +26,22 @@ CREATE TABLE HUNTER_NEN (
 -- Data ---------------------------------------------------------
 -- --------------------------------------------------------------
 
-INSERT INTO NEN_TYPE (NAME, NEN_LEVEL) VALUES ('Intensificación', 'Mejora sus habilidades físicas');
-INSERT INTO NEN_TYPE (NAME, NEN_LEVEL) VALUES ('Transformación', 'Cambia propiedades de su aura');
-INSERT INTO NEN_TYPE (NAME, NEN_LEVEL) VALUES ('Materialización', 'Crea objetos físicos');
-INSERT INTO NEN_TYPE (NAME, NEN_LEVEL) VALUES ('Especialización', 'Habilidades únicas fuera de las demás categorías');
-INSERT INTO NEN_TYPE (NAME, NEN_LEVEL) VALUES ('Emisión', 'Proyecta el aura lejos del cuerpo');
-INSERT INTO NEN_TYPE (NAME, NEN_LEVEL) VALUES ('Manipulación', 'Controla objetos o seres');
+INSERT INTO NEN_TYPE (NAME, DESCRIPTION) VALUES ('Intensificación', 'Mejora sus habilidades físicas');
+INSERT INTO NEN_TYPE (NAME, DESCRIPTION) VALUES ('Transformación', 'Cambia propiedades de su aura');
+INSERT INTO NEN_TYPE (NAME, DESCRIPTION) VALUES ('Materialización', 'Crea objetos físicos');
+INSERT INTO NEN_TYPE (NAME, DESCRIPTION) VALUES ('Especialización', 'Habilidades únicas fuera de las demás categorías');
+INSERT INTO NEN_TYPE (NAME, DESCRIPTION) VALUES ('Emisión', 'Proyecta el aura lejos del cuerpo');
+INSERT INTO NEN_TYPE (NAME, DESCRIPTION) VALUES ('Manipulación', 'Controla objetos o seres');
 
 INSERT INTO HUNTER (NAME, AGE, ORIGIN) VALUES ('Gon Freecss', 14, 'Isla Ballena');
 INSERT INTO HUNTER (NAME, AGE, ORIGIN) VALUES ('Killua Zoldyck', 14, 'Montaña Kukuru');
 INSERT INTO HUNTER (NAME, AGE, ORIGIN) VALUES ('Kurapika Kurta', 17, 'Aldea Kurta');
 INSERT INTO HUNTER (NAME, AGE, ORIGIN) VALUES ('Leorio Paradinight', 19, 'Ciudad desconocida');
 
-INSERT INTO HUNTER_NEN VALUES (1, 1, 90.0);
-INSERT INTO HUNTER_NEN VALUES (2, 2, 80.5);
-INSERT INTO HUNTER_NEN VALUES (3, 4, 95.0);
-INSERT INTO HUNTER_NEN VALUES (4, 5, 65.0);
+INSERT INTO HUNTER_NEN (ID_HUNTER, ID_NEN_TYPE, NEN_LEVEL) VALUES (1, 1, 90.0);
+INSERT INTO HUNTER_NEN (ID_HUNTER, ID_NEN_TYPE, NEN_LEVEL) VALUES (2, 2, 80.5);
+INSERT INTO HUNTER_NEN (ID_HUNTER, ID_NEN_TYPE, NEN_LEVEL) VALUES (3, 4, 95.0);
+INSERT INTO HUNTER_NEN (ID_HUNTER, ID_NEN_TYPE, NEN_LEVEL) VALUES (4, 5, 65.0);
 
 -- Types --------------------------------------------------------
 -- --------------------------------------------------------------
@@ -126,6 +126,10 @@ SELECT
 FROM hunter a 
     INNER JOIN hunter_nen b ON a.id_hunter = b.id_hunter
     INNER JOIN nen_type c ON c.id_nen_type = b.id_nen_type;
+
+SELECT * FROM HUNTER_NEN;
+SELECT * FROM HUNTER;
+SELECT * FROM NEN_TYPE;
 
 DROP TABLE HUNTER_NEN;
 DROP TABLE HUNTER;

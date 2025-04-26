@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+option csharp_namespace = "gRPC.NenService.Protos";
+
+package nen;
+
+service NenServiceProto {
+  rpc GetAllNenTypes (Empty) returns (NenTypeListResponse);
+  rpc GetNenTypeById (NenTypeIdRequest) returns (NenTypeResponse);
+  rpc CreateNenType (NenTypeRequest) returns (GenericResponse);
+  rpc UpdateNenType (NenTypeUpdateRequest) returns (GenericResponse);
+  rpc DeleteNenType (NenTypeIdRequest) returns (GenericResponse);
+}
+
+message Empty {}
+
+message NenTypeIdRequest {
+  int32 id = 1;
+}
+
+message NenTypeRequest {
+  string name = 1;
+}
+
+message NenTypeUpdateRequest {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message NenTypeResponse {
+  int32 id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message NenTypeListResponse {
+  repeated NenTypeResponse nenTypes = 1;
+}
+
+message GenericResponse {
+  bool success = 1;
+  string message = 2;
+}

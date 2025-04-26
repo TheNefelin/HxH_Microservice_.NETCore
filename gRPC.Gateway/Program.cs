@@ -1,4 +1,6 @@
 using gRPC.HunterNenService;
+using gRPC.HunterService.Protos;
+using gRPC.NenService.Protos;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +14,16 @@ builder.Services.AddGrpc().AddJsonTranscoding();
 builder.Services.AddGrpcClient<HunterNenProto.HunterNenProtoClient>(o =>
 {
     o.Address = new Uri("https://localhost:7108");
+});
+
+builder.Services.AddGrpcClient<HunterServiceProto.HunterServiceProtoClient>(o =>
+{
+    o.Address = new Uri("https://localhost:7000");
+});
+
+builder.Services.AddGrpcClient<NenServiceProto.NenServiceProtoClient>(o =>
+{
+    o.Address = new Uri("https://localhost:7048");
 });
 
 // Add Swagger

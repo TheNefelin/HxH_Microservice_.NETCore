@@ -25,6 +25,8 @@
   <ItemGroup>
     <ProjectReference Include="..\ClassLibrary.Application\ClassLibrary.Application.csproj" />
     <ProjectReference Include="..\gRPC.HunterNenService\gRPC.HunterNenService.csproj" />
+    <ProjectReference Include="..\gRPC.HunterService\gRPC.HunterService.csproj" />
+    <ProjectReference Include="..\gRPC.NenService\gRPC.NenService.csproj" />
   </ItemGroup>
 
   <ItemGroup>

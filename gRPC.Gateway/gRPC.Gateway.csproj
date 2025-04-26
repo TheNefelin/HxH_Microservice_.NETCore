@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Protos\hunter.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Google.Api.CommonProtos" Version="2.16.0" />
     <PackageReference Include="Grpc.AspNetCore" Version="2.70.0" />
     <PackageReference Include="Grpc.Tools" Version="2.71.0">
@@ -22,7 +26,9 @@
   </ItemGroup>
 
     <ItemGroup>
+		<Protobuf Include="Protos\hunter.proto" GrpcServices="Client" />
 		<Protobuf Include="Protos\hunternen.proto" GrpcServices="Client" />
+		<Protobuf Include="Protos\nen.proto" GrpcServices="Client" />
     </ItemGroup>
 	
 </Project>
