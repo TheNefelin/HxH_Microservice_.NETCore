@@ -11,11 +11,11 @@ graph TD;
     gRPC_HunterService --> gRPC_Gateway
     gRPC_HunterNenService --> gRPC_Gateway
     gRPC_NenService --> gRPC_Gateway
-    UnitTests --> Infrastructure
-    UnitTests --> Application
-    UnitTests --> gRPC_HunterService
-    UnitTests --> gRPC_HunterNenService
-    UnitTests --> gRPC_NenService
+    UnitTests --> InfrastructureTest
+    UnitTests --> ApplicationTest
+    UnitTests --> gRPC_HunterServiceTest
+    UnitTests --> gRPC_HunterNenServiceTest
+    UnitTests --> gRPC_NenServiceTest
     ;
 ```
 
